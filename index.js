@@ -1,51 +1,41 @@
-document.querySelector ("button").addEventListener ('click', function() {
-    const monicker = document.getElementById('monicker').value;
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone');
-    const breed = document.getElementById('breed');
-    const nutrition = document.querySelectorAll('input[name="nutrition"]') // получение значения чекбокса в форме
-    for (let n of nutrition) {
-    if (n.checked) {
-    const catNutrition = n.value;
-    console.log(catNutrition);
-        }
-    }
-    const gender = document.querySelectorAll('input[name="gender"]') // получение значения радио в форме
-    for (let g of gender) {
-    if (g.checked) {
-    const catGender = g.value;
-    console.log(catGender);
-        }
-    }
-    const comment = document.getElementById('comment');
-    const cat = new Cat(monicker, name, phone, breed, catNutrition, catGender, comment);
+//нахожу форму в дереве документа
+const applicationForm = document.getElementById('formData');
+//создаю событие submit - получение данных из формы для обработки до отправки на сервер
+applicationForm.addEventListener('submit', handleFormSubmit);
+//функция отправки формы без перезагрузки страницы
+function handleFormSubmit(event) {
+    // событие для формы, чтобы данные самостоятельно не отправлялись на сервер
+    event.preventDefault();
+    //получаю поля формы и достаю из их значения
+    const name = applicationForm.querySelector('[name="name"]');
+    const phone = applicationForm.querySelector('[name="phone"]');
+    const monicker = applicationForm.querySelector('[name="monicker"]');
+    const breed = applicationForm.querySelector('[name="breed"]');
+    const gender = applicationForm.querySelector('[name="gender"]:checked');
+    const nutrition = applicationForm.querySelectorAll('[name="nutrition"]:checked');
+    const comment = applicationForm.querySelector('[name="comment"]');
+    //создаю объект и записываю в него полученные из формы значения
+    const applicationFormValues = {
+        name: name.value,
+        phone: phone.value,
+        monicker: monicker? monicker.value:undefined,
+        breed: breed.value,
+        gender: gender.value,
+        nutrition: nutrition? [...nutrition].map(current => current.value):undefined,
+        comment: comment.value
+    };
+    const cat = new Cat(applicationFormValues);
     console.log(cat);
-});
+}
 
 class Cat {
-    constructor(monicker, name, phone, breed, catNutrition, catGender, comment) {
-        this.monicker = monicker; // кличка питомца
+    constructor({name, phone, monicker, breed, gender, nutrition, comment}) {
         this.name = name; // имя владельца
         this.phone = phone; // телефон владельца
+        this.monicker = monicker; // кличка питомца
         this.breed = breed; // порода
-        this.nutrition = catNutrition; // чем питается
-        this.gender = catGender; // пол питомца
+        this.gender = gender; // пол питомца
+        this.nutrition = nutrition; // чем питается
         this.comment = comment; // комментарий владельца
     }
 }
-
-
-
-
-
-// const applicationForm = document.getElementById('data');
-//applicationForm.addEventListener('submit', handleFormSubmit);
-
-// function handleFormSubmit(event) {
-//     event.preventDefault()
-//     serializaForm(applicationForm);
-// }
-
-// function serializaForm(formData) {
-//     console.log(formData);
-// }
